@@ -18,6 +18,10 @@ class List extends MalValue {
     this.ast = ast.slice();
   }
 
+  isEmpty() {
+    return this.ast.length === 0;
+  }
+
   stringify(print_readably = false) {
     return (
       "(" + this.ast.map((el) => stringify(el, print_readably)).join(" ") + ")"
@@ -29,6 +33,10 @@ class Vecotr extends MalValue {
   constructor(ast) {
     super();
     this.ast = ast.slice();
+  }
+
+  isEmpty() {
+    return this.ast.length === 0;
   }
 
   stringify(print_readably = false) {
