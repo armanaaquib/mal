@@ -36,6 +36,14 @@ class Env {
 
     throw `${key.symbol} not found`;
   }
+
+  static createEnv(outer, binds, exprs) {
+    const env = new Env(outer);
+    binds.forEach((symbol, index) => {
+      env.set(symbol, exprs[index]);
+    });
+    return env;
+  }
 }
 
 module.exports = Env;

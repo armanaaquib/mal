@@ -9,6 +9,10 @@ const stringify = (val, print_readably) => {
     return val.stringify(print_readably);
   }
 
+  if (val instanceof Function) {
+    return "#<function>";
+  }
+
   return val.toString();
 };
 
