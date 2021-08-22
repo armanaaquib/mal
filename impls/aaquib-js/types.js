@@ -9,10 +9,6 @@ const stringify = (val, print_readably) => {
     return val.stringify(print_readably);
   }
 
-  if (val instanceof Function) {
-    return "#<function>";
-  }
-
   return val.toString();
 };
 
@@ -117,6 +113,19 @@ class MalSymbol extends MalValue {
   }
 }
 
+class Fn extends MalValue {
+  constructor(fnBody, params, env) {
+    super();
+    this.fnBody = fnBody;
+    this.params = params;
+    this.env = env;
+  }
+
+  stringify(print_readably = false) {
+    return "#<funcion>";
+  }
+}
+
 class NilVal extends MalValue {
   constructor() {
     super();
@@ -135,6 +144,7 @@ module.exports = {
   Keyword,
   MalSymbol,
   Hashmap,
+  Fn,
   Nil,
   stringify,
 };
