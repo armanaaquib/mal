@@ -126,6 +126,17 @@ class Fn extends MalValue {
   }
 }
 
+class Atom extends MalValue {
+  constructor(malValue) {
+    super();
+    this.malValue = malValue;
+  }
+
+  stringify(print_readably = false) {
+    return `(atom ${stringify(this.malValue, print_readably)})`;
+  }
+}
+
 class NilVal extends MalValue {
   constructor() {
     super();
@@ -145,6 +156,7 @@ module.exports = {
   MalSymbol,
   Hashmap,
   Fn,
+  Atom,
   Nil,
   stringify,
 };

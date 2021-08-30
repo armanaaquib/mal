@@ -1,3 +1,4 @@
+const { read } = require("fs");
 const {
   List,
   Vecotr,
@@ -109,9 +110,13 @@ const read_atom = (reader) => {
   return new MalSymbol(token);
 };
 
+const read_at = (reader) => {
+  reader.next();
+  return new List([new MalSymbol("deref"), new MalSymbol(reader.peek())]);
+};
+
 const read_form = (reader) => {
   const token = reader.peek();
-
   switch (token[0]) {
     case "(":
       return read_list(reader);
@@ -125,6 +130,11 @@ const read_form = (reader) => {
       return read_hashmap(reader);
     case "}":
       throw "unbalanced }";
+    case "@":
+      return read_at(reader);
+    case ";":
+      reader.next();
+      return read_form(reader);
     default:
       return read_atom(reader);
   }
