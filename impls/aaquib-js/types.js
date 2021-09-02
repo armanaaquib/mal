@@ -22,6 +22,18 @@ class List extends MalValue {
     return this.ast.length === 0;
   }
 
+  cons(el) {
+    return new List([el, ...this.ast]);
+  }
+
+  concat(other) {
+    return new List([...this.ast, ...other.ast]);
+  }
+
+  beginsWith(el) {
+    return this.ast[0] && this.ast[0].symbol === el;
+  }
+
   stringify(print_readably = false) {
     return (
       "(" + this.ast.map((el) => stringify(el, print_readably)).join(" ") + ")"
@@ -37,6 +49,14 @@ class Vecotr extends MalValue {
 
   isEmpty() {
     return this.ast.length === 0;
+  }
+
+  cons(el) {
+    return new List([el, ...this.ast]);
+  }
+
+  concat(other) {
+    return new List([...this.ast, ...other.ast]);
   }
 
   stringify(print_readably = false) {

@@ -110,31 +110,64 @@ const read_atom = (reader) => {
   return new MalSymbol(token);
 };
 
-const read_at = (reader) => {
+const read_deref = (reader) => {
   reader.next();
-  return new List([new MalSymbol("deref"), new MalSymbol(reader.peek())]);
+  return new List([new MalSymbol("deref"), read_form(reader)]);
+};
+
+const read_quote = (reader) => {
+  reader.next();
+  return new List([new MalSymbol("quote"), read_form(reader)]);
+};
+
+const read_quasiquote = (reader) => {
+  reader.next();
+  return new List([new MalSymbol("quasiquote"), read_form(reader)]);
+};
+
+const read_unquote = (reader) => {
+  reader.next();
+  return new List([new MalSymbol("unquote"), read_form(reader)]);
+};
+
+const read_spliceunquote = (reader) => {
+  reader.next();
+  return new List([new MalSymbol("splice-unquote"), read_form(reader)]);
 };
 
 const read_form = (reader) => {
   const token = reader.peek();
+
+  if (token.slice(0, 2) === "~@") {
+    return read_spliceunquote(reader);
+  }
+
   switch (token[0]) {
     case "(":
       return read_list(reader);
-    case ")":
-      throw "unbalanced )";
     case "[":
       return read_vector(reader);
-    case "]":
-      throw "unbalanced ]";
     case "{":
       return read_hashmap(reader);
-    case "}":
-      throw "unbalanced }";
     case "@":
-      return read_at(reader);
+      return read_deref(reader);
+    case "'":
+      return read_quote(reader);
+    case "`":
+      return read_quasiquote(reader);
+    case "~":
+      return read_unquote(reader);
     case ";":
       reader.next();
       return read_form(reader);
+    case ")":
+      throw "unbalanced )";
+
+    case "]":
+      throw "unbalanced ]";
+
+    case "}":
+      throw "unbalanced }";
     default:
       return read_atom(reader);
   }

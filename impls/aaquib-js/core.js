@@ -87,5 +87,21 @@ ns.set(new MalSymbol("reset!"), (atom, malValue) => {
   atom.malValue = malValue;
   return atom.malValue;
 });
+ns.set(new MalSymbol("cons"), (el, list) => {
+  return list.cons(el);
+});
+ns.set(new MalSymbol("concat"), (...lists) => {
+  return lists.reduce(
+    (concatedLists, list) => concatedLists.concat(list),
+    new List([])
+  );
+});
+ns.set(new MalSymbol("vec"), (list) => {
+  if (list instanceof List || list instanceof Vecotr) {
+    return new Vecotr(list.ast);
+  } else {
+    throw "Unsupported type";
+  }
+});
 
 module.exports = { ns };
