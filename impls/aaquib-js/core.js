@@ -103,5 +103,34 @@ ns.set(new MalSymbol("vec"), (list) => {
     throw "Unsupported type";
   }
 });
+ns.set(new MalSymbol("nth"), (seq, index) => {
+  if ((seq instanceof List || seq instanceof Vecotr) && seq.ast[index]) {
+    return seq.ast[index];
+  } else {
+    throw "Unsupported type or out of range index";
+  }
+});
+ns.set(new MalSymbol("first"), (seq) => {
+  if (seq === Nil) {
+    return Nil;
+  }
+
+  if (seq instanceof List || seq instanceof Vecotr) {
+    return seq.ast[0] ? seq.ast[0] : Nil;
+  } else {
+    throw "Unsupported type";
+  }
+});
+ns.set(new MalSymbol("rest"), (seq) => {
+  if (seq === Nil) {
+    return new List([]);
+  }
+
+  if (seq instanceof List || seq instanceof Vecotr) {
+    return new List(seq.ast.slice(1));
+  } else {
+    throw "Unsupported type";
+  }
+});
 
 module.exports = { ns };

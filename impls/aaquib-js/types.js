@@ -134,11 +134,17 @@ class MalSymbol extends MalValue {
 }
 
 class Fn extends MalValue {
-  constructor(fnBody, params, env) {
+  constructor(fnBody, params, env, fn, isMicro = false) {
     super();
     this.fnBody = fnBody;
     this.params = params;
     this.env = env;
+    this.fn = fn;
+    this.isMicro = false;
+  }
+
+  apply(args) {
+    return this.fn.apply(null, args);
   }
 
   stringify(print_readably = false) {
