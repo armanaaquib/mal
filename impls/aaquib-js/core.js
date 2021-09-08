@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { pr_str } = require("./printer");
 const { read_str } = require("./reader");
-const { List, MalSymbol, Vecotr, Nil, Str, Atom } = require("./types");
+const { List, MalSymbol, Vecotr, Nil, Str, Atom, Fn } = require("./types");
 
 const ns = new Map();
 
@@ -131,6 +131,21 @@ ns.set(new MalSymbol("rest"), (seq) => {
   } else {
     throw "Unsupported type";
   }
+});
+
+ns.set(new MalSymbol("reduce"), (seq, fn, context) => {
+  if (!(seq instanceof List || seq instanceof Vecotr)) {
+    throw "Unsupported type";
+  }
+
+  let reducer = fn;
+  if (fn instanceof Fn) {
+    reducer = fn.fn;
+  }
+
+  return context === undefined
+    ? seq.ast.reduce(reducer)
+    : seq.ast.reduce(reducer, context);
 });
 
 module.exports = { ns };
