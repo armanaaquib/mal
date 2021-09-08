@@ -9,6 +9,7 @@ ns.set(new MalSymbol("+"), (n1, n2) => n1 + n2);
 ns.set(new MalSymbol("-"), (n1, n2) => n1 - n2);
 ns.set(new MalSymbol("*"), (n1, n2) => n1 * n2);
 ns.set(new MalSymbol("/"), (n1, n2) => n1 / n2);
+ns.set(new MalSymbol("mod"), (n1, n2) => n1 % n2);
 
 ns.set(new MalSymbol("prn"), (arg) => {
   if (arg === undefined) {

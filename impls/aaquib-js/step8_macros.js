@@ -235,6 +235,12 @@ rep(
   '(def! load-file (fn* (f) (eval (read-string (str "(do " (slurp f) "\nnil)")))))'
 );
 rep(
+  "(def! map (fn* [li mapper] (reduce li (fn* [cx el] (concat cx `(~(mapper el)))) '())))"
+);
+rep(
+  "(def! filter (fn* [li predicate] (reduce li (fn* [cx el] (concat cx (if (predicate el) `(~el) '()))) '())))"
+);
+rep(
   "(defmacro! cond (fn* (& xs) (if (> (count xs) 0) (list 'if (first xs) (if (> (count xs) 1) (nth xs 1) (throw \"odd number of forms to cond\")) (cons 'cond (rest (rest xs)))))))"
 );
 
