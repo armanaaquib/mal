@@ -235,10 +235,10 @@ rep(
   '(def! load-file (fn* (f) (eval (read-string (str "(do " (slurp f) "\nnil)")))))'
 );
 rep(
-  "(def! map (fn* [li mapper] (reduce li (fn* [cx el] (concat cx `(~(mapper el)))) '())))"
+  "(def! map (fn* [mapper li] (reduce (fn* [cx el] (concat cx (list (mapper el)))) '() li)))"
 );
 rep(
-  "(def! filter (fn* [li predicate] (reduce li (fn* [cx el] (concat cx (if (predicate el) `(~el) '()))) '())))"
+  "(def! filter (fn* [pred li] (reduce (fn* [cx el] (if (pred el) (concat cx (list el)) cx)) '() li)))"
 );
 rep(
   "(defmacro! cond (fn* (& xs) (if (> (count xs) 0) (list 'if (first xs) (if (> (count xs) 1) (nth xs 1) (throw \"odd number of forms to cond\")) (cons 'cond (rest (rest xs)))))))"

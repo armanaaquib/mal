@@ -117,7 +117,7 @@ ns.set(new MalSymbol("first"), (seq) => {
   }
 
   if (seq instanceof List || seq instanceof Vecotr) {
-    return seq.ast[0] ? seq.ast[0] : Nil;
+    return seq.ast[0] === undefined ? Nil : seq.ast[0];
   } else {
     throw "Unsupported type";
   }
@@ -134,19 +134,13 @@ ns.set(new MalSymbol("rest"), (seq) => {
   }
 });
 
-ns.set(new MalSymbol("reduce"), (seq, fn, context) => {
-  if (!(seq instanceof List || seq instanceof Vecotr)) {
-    throw "Unsupported type";
-  }
-
+ns.set(new MalSymbol("reduce"), (fn, initVAl, seq) => {
   let reducer = fn;
   if (fn instanceof Fn) {
     reducer = fn.fn;
   }
 
-  return context === undefined
-    ? seq.ast.reduce(reducer)
-    : seq.ast.reduce(reducer, context);
+  return seq ? seq.ast.reduce(reducer, initVAl) : initVAl.ast.reduce(reducer);
 });
 
 module.exports = { ns };
