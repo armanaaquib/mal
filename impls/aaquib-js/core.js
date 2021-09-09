@@ -143,4 +143,7 @@ ns.set(new MalSymbol("reduce"), (fn, initVAl, seq) => {
   return seq ? seq.ast.reduce(reducer, initVAl) : initVAl.ast.reduce(reducer);
 });
 
+ns.set(new MalSymbol("even?"), (num) => num % 2 === 0);
+ns.set(new MalSymbol("odd?"), (num) => num % 2 === 1);
+
 module.exports = { ns };
