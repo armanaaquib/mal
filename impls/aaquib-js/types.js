@@ -148,7 +148,7 @@ class Fn extends MalValue {
   }
 
   stringify(print_readably = false) {
-    return "#<funcion>";
+    return this.isMacro ? "#<macro>" : "#<funcion>";
   }
 }
 
