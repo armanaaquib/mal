@@ -197,7 +197,7 @@ const EVAL = (ast, env) => {
       }
 
       case "macroexpand": {
-        return macroExpand(ast.ast[1], env);
+        return macroExpand(EVAL(ast.ast[1], env), env);
       }
 
       case "fn*": {
