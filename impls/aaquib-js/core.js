@@ -1,21 +1,28 @@
 const fs = require("fs");
 const { pr_str } = require("./printer");
 const { read_str } = require("./reader");
-const { List, MalSymbol, Vecotr, Nil, Str, Atom, Fn } = require("./types");
+const {
+  List,
+  MalSymbol,
+  Vecotr,
+  Nil,
+  Str,
+  Atom,
+  Fn,
+  MalException,
+} = require("./types");
 
 const ns = new Map();
 
-ns.set(new MalSymbol("+"), (n1, n2) => n1 + n2);
-ns.set(new MalSymbol("-"), (n1, n2) => n1 - n2);
-ns.set(new MalSymbol("*"), (n1, n2) => n1 * n2);
-ns.set(new MalSymbol("/"), (n1, n2) => n1 / n2);
-ns.set(new MalSymbol("mod"), (n1, n2) => n1 % n2);
+ns.set(new MalSymbol("+"), (...args) => args.reduce((n1, n2) => n1 + n2));
+ns.set(new MalSymbol("-"), (...args) => args.reduce((n1, n2) => n1 - n2));
+ns.set(new MalSymbol("*"), (...args) => args.reduce((n1, n2) => n1 * n2));
+ns.set(new MalSymbol("/"), (...args) => args.reduce((n1, n2) => n1 / n2));
+ns.set(new MalSymbol("mod"), (...args) => args.reduce((n1, n2) => n1 % n2));
 
-ns.set(new MalSymbol("prn"), (arg) => {
-  if (arg === undefined) {
-    return Nil;
-  }
-  console.log(pr_str(arg, true));
+ns.set(new MalSymbol("prn"), (...args) => {
+  const str = args.map((arg) => pr_str(arg, true)).join(" ");
+  console.log(str);
   return Nil;
 });
 
@@ -48,17 +55,7 @@ ns.set(new MalSymbol("slurp"), (filename) => {
 ns.set(new MalSymbol("read-string"), (str) => read_str(str.string));
 
 ns.set(new MalSymbol("pr-str"), (...args) => {
-  return new Str(
-    args
-      .map((arg) => {
-        const string = pr_str(arg, true);
-        if (string.startsWith('"')) {
-          return string.slice(1, -1);
-        }
-        return string;
-      })
-      .join(" ")
-  );
+  return new Str(args.map((arg) => pr_str(arg, true)).join(" "));
 });
 
 ns.set(new MalSymbol("str"), (...args) => {
@@ -145,5 +142,19 @@ ns.set(new MalSymbol("reduce"), (fn, initVAl, seq) => {
 
 ns.set(new MalSymbol("even?"), (num) => num % 2 === 0);
 ns.set(new MalSymbol("odd?"), (num) => num % 2 === 1);
+ns.set(new MalSymbol("throw"), (msg) => {
+  throw new MalException(msg);
+});
+ns.set(new MalSymbol("apply"), (fn, ...args) => {
+  let appliedArgs = args;
+  const lastArg = args[args.length - 1];
+  if (lastArg instanceof List || lastArg instanceof Vecotr) {
+    appliedArgs = args.slice(0, -1).concat(args[args.length - 1].ast);
+  }
+  return fn.apply(null, appliedArgs);
+});
+ns.set(new MalSymbol("nil?"), (val) => val === Nil);
+ns.set(new MalSymbol("true?"), (val) => val === true);
+ns.set(new MalSymbol("false?"), (val) => val === false);
 
 module.exports = { ns };

@@ -1,4 +1,4 @@
-const { MalSymbol, List } = require("./types");
+const { MalSymbol, List, Str } = require("./types");
 
 class Env {
   constructor(outer = null) {
@@ -34,7 +34,7 @@ class Env {
       return env.data.get(key.symbol);
     }
 
-    throw `${key.symbol} not found`;
+    throw new Str(`'${key.symbol}' not found`);
   }
 
   static createEnv(outer, binds, exprs) {

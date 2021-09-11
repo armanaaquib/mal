@@ -1,7 +1,15 @@
 const readline = require("readline");
 const { read_str } = require("./reader");
 const { pr_str } = require("./printer");
-const { MalSymbol, List, Vecotr, Hashmap, Nil, Fn } = require("./types");
+const {
+  MalSymbol,
+  List,
+  Vecotr,
+  Hashmap,
+  Nil,
+  Fn,
+  MalException,
+} = require("./types");
 const Env = require("./env");
 const { ns } = require("./core");
 const { exit } = require("process");
@@ -200,6 +208,26 @@ const EVAL = (ast, env) => {
         return macroExpand(EVAL(ast.ast[1], env), env);
       }
 
+      case "symbol?": {
+        return ast.ast[1] instanceof MalSymbol;
+      }
+
+      case "try*": {
+        try {
+          return EVAL(ast.ast[1], env);
+        } catch (e) {
+          if (
+            ast.ast[2] instanceof List &&
+            ast.ast[2].ast[0].symbol === "catch*"
+          ) {
+            const newEnv = new Env(env);
+            newEnv.set(ast.ast[2].ast[1], e);
+            return EVAL(ast.ast[2].ast[2], newEnv);
+          }
+          throw new MalException("Expected a catch block");
+        }
+      }
+
       case "fn*": {
         const fn = (...args) => {
           const newEnv = Env.createEnv(env, ast.ast[1].ast, args);
@@ -256,7 +284,7 @@ const main = () => {
     try {
       console.log(rep(str));
     } catch (e) {
-      console.log(e);
+      console.log(PRINT(e));
     } finally {
       main();
     }

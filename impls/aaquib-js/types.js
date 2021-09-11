@@ -143,8 +143,8 @@ class Fn extends MalValue {
     this.isMacro = isMacro;
   }
 
-  apply(args) {
-    return this.fn.apply(null, args);
+  apply(_, args) {
+    return this.fn.apply(_, args);
   }
 
   stringify(print_readably = false) {
@@ -160,6 +160,17 @@ class Atom extends MalValue {
 
   stringify(print_readably = false) {
     return `(atom ${stringify(this.malValue, print_readably)})`;
+  }
+}
+
+class MalException extends MalValue {
+  constructor(message) {
+    super();
+    this.message = message;
+  }
+
+  stringify(print_readably = false) {
+    return `${stringify(this.message, print_readably)}`;
   }
 }
 
@@ -183,6 +194,7 @@ module.exports = {
   Hashmap,
   Fn,
   Atom,
+  MalException,
   Nil,
   stringify,
 };
