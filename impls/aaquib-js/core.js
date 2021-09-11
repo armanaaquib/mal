@@ -10,6 +10,8 @@ const {
   Atom,
   Fn,
   MalException,
+  Keyword,
+  Hashmap,
 } = require("./types");
 
 const ns = new Map();
@@ -156,5 +158,48 @@ ns.set(new MalSymbol("apply"), (fn, ...args) => {
 ns.set(new MalSymbol("nil?"), (val) => val === Nil);
 ns.set(new MalSymbol("true?"), (val) => val === true);
 ns.set(new MalSymbol("false?"), (val) => val === false);
+ns.set(new MalSymbol("symbol"), (str) => new MalSymbol(str.string));
+ns.set(new MalSymbol("keyword"), (str) => {
+  if (str instanceof Keyword) {
+    return str;
+  }
+  return new Keyword(str.string);
+});
+ns.set(new MalSymbol("keyword?"), (val) => val instanceof Keyword);
+ns.set(new MalSymbol("vector"), (...args) => new Vecotr(args));
+ns.set(new MalSymbol("vector?"), (val) => val instanceof Vecotr);
+ns.set(
+  new MalSymbol("sequential?"),
+  (val) => val instanceof Vecotr || val instanceof List
+);
+ns.set(new MalSymbol("hash-map"), (...args) => {
+  if (args.length % 2 === 1) {
+    throw "Expected even no of args";
+  }
+  const map = new Map();
+  for (let i = 0; i < args.length - 1; i += 2) {
+    map.set(args[i], args[i + 1]);
+  }
+  return new Hashmap(map);
+});
+ns.set(new MalSymbol("map?"), (val) => val instanceof Hashmap);
+ns.set(
+  new MalSymbol("keys"),
+  (map) => new List(Array.from(map.hashmap.keys()))
+);
+ns.set(
+  new MalSymbol("vals"),
+  (map) => new List(Array.from(map.hashmap.values()))
+);
+// ns.set(new MalSymbol("get"), (map, key) => {
+//   if (map === Nil) {
+//     return Nil;
+//   }
+//   const val = map.hashmap.get(key);
+//   return val === undefined ? Nil : val;
+// });
+// ns.set(new MalSymbol("contains?"), (map, key) => {
+//   return map.hashmap.has(key);
+// });
 
 module.exports = { ns };
